@@ -163,6 +163,19 @@ async function updated(){
     await inquirer.prompt(simpleQ).then((result)=>{
         console.log(result)
     })
+
+    try{
+        const change = await inquirer.prompt({
+            message:"What would you like to change it to?",
+            name: "change"
+        })
+        console.log(change)
+    
+        }
+        catch(err){
+            console.log(err)
+        }
+
     welcome()
 }
 // role functions
@@ -202,7 +215,17 @@ async function updater(){
     await inquirer.prompt(simpleQ).then((result)=>{
         console.log(result)
     })
-
+    try{
+        const change = await inquirer.prompt({
+            message:"What would you like to change it to?",
+            name: "change"
+        })
+        console.log(change)
+    
+        }
+        catch(err){
+            console.log(err)
+        }
 
     
     welcome()
@@ -254,7 +277,17 @@ async function updatee(){
     await inquirer.prompt(simpleQ).then((result)=>{
         console.log(result)
     })
-
+    try{
+        const change = await inquirer.prompt({
+            message:"What would you like to change it to?",
+            name: "change"
+        })
+        console.log(change)
+    
+        }
+        catch(err){
+            console.log(err)
+        }
 
 welcome()
 }
