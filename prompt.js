@@ -85,8 +85,14 @@ async function employees(){
             adde();
             break;
             case'Update Employees': 
-
-            updatee();
+ connection.query("SELECT * FROM employees", function(err, res) {
+                if (err) throw err; 
+            let arr = []
+                res.forEach(item=>{
+                    arr.push(item) 
+                })
+            updatee(arr);
+                })
             break;
             case'back': 
             welcome()
@@ -315,7 +321,7 @@ async function updater(input){
     input.forEach(item=>{
         arr.push(item.title)
     })
-    let array =[["Which role would you like to update? ",arr, 'update'],["Which parameter would you like to update?",["title","salary","department_Id"], "parameter"]]
+    let array =[["Which role would you like to update? ",arr, 'update'],["Which parameter would you like to update?",["title","salary","department_id"], "parameter"]]
     let simpleQ = array.map((prompt)=>{
         return{
             type:"list",
@@ -403,7 +409,11 @@ welcome();
 }
 
 async function updatee(input){
-    let array =[["Which Employee would you like to update? ",["placeholder"], 'update'],["Which parameter would you like to update?",["First Name","Last Name","Role Id", "Manager Id"], "parameter"]]
+    let arr =[]
+    input.forEach(item=>{
+        arr.push(item.first_name)
+    })
+    let array =[["Which Employee would you like to update? ",arr, 'update'],["Which parameter would you like to update?",["first_Name","last_Name","role_id", "manager_id"], "parameter"]]
     let simpleQ = array.map((prompt)=>{
         return{
             type:"list",
@@ -416,6 +426,14 @@ async function updatee(input){
     
     await inquirer.prompt(simpleQ).then((result)=>{
         console.log(result)
+        input.forEach(item=>{
+            if (result.update === item.first_name){
+                x=item.id
+                console.log(x)
+            }
+            y= result.parameter.toString()
+        })
+    
     })
     try{
         const change = await inquirer.prompt({
@@ -423,7 +441,15 @@ async function updatee(input){
             name: "change"
         })
         console.log(change)
-    
+        z = change.change
+        var query = connection.query(
+            "UPDATE employees SET "+y+" = ? WHERE id = ?",[z,x],
+            function(err, res,fields) {
+              if (err) console.log(err);
+              console.log(res.affectedRows + " employees updated!\n");
+            }
+          );
+
         }
         catch(err){
             console.log(err)
