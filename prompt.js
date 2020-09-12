@@ -3,6 +3,9 @@ const inquirer = require('inquirer')
 const mysql = require('mysql')
 const cTable = require('console.table')
 const { generateKeyPair, generateKeyPairSync } = require("crypto");
+var x;
+var y;
+var z;
 
 
 var connection = mysql.createConnection({
@@ -123,7 +126,7 @@ async function departments(){
                 if (err) throw err; 
                 let arr = []
                 res.forEach(item=>{
-                   arr.push(item.department_name) 
+                   arr.push(item) 
                 })
                 
                 updated(arr)
@@ -162,8 +165,16 @@ async function roles(){
             case'Add Roles': 
             addr()
             break;
-            case'Update Roles': 
-            updater()
+            case'Update Roles':
+            connection.query("SELECT * FROM roles", function(err, res) {
+                if (err) throw err; 
+                let arr = []
+                res.forEach(item=>{
+                   arr.push(item) 
+                })
+                
+                updater(arr)
+              });
             break;
             case'back': 
             welcome();
@@ -211,11 +222,12 @@ async function addd(){
 }
 
 async function updated(input){
-
     let arr =[]
+input.forEach(item=>{
+    arr.push(item.department_name)
+})
 
-    let array =[["Which department would you like to update? ",input, 'update']]
-
+    let array =[["Which department would you like to update? ",arr, 'update']]
     let simpleQ = array.map((prompt)=>{
         return{
             type:"list",
@@ -225,8 +237,13 @@ async function updated(input){
         }
     })
     await inquirer.prompt(simpleQ).then((result)=>{
-        arr =[]
-        arr.push(result.update)
+        input.forEach(item=>{
+            if (result.update === item.department_name){
+                x=item.id
+                console.log(x)
+            }
+        })
+     
     })
 
 
@@ -236,7 +253,23 @@ async function updated(input){
             name: "change"
         })
 
-        console.log(change);
+        console.log(change.change);
+        var query = connection.query(
+            "UPDATE departments SET ? WHERE ?",
+            [
+              {
+                department_name: change.change
+              },
+              {
+                id: x
+              }
+            ],
+            function(err, res) {
+              if (err) console.log(err);
+              console.log(res.affectedRows + " products updated!\n");
+            }
+          );
+
         }
         catch(err){
             console.log(err)
@@ -277,8 +310,12 @@ await inquirer.prompt(simpleQ).then((result)=>{
 welcome()
 }
 
-async function updater(){
-    let array =[["Which role would you like to update? ",["placeholder"], 'update'],["Which parameter would you like to update?",["title","salary","department Id"], "parameter"]]
+async function updater(input){
+    let arr =[]
+    input.forEach(item=>{
+        arr.push(item.title)
+    })
+    let array =[["Which role would you like to update? ",arr, 'update'],["Which parameter would you like to update?",["title","salary","department_Id"], "parameter"]]
     let simpleQ = array.map((prompt)=>{
         return{
             type:"list",
@@ -290,15 +327,31 @@ async function updater(){
     
     
     await inquirer.prompt(simpleQ).then((result)=>{
-        console.log(result)
+        input.forEach(item=>{
+            if (result.update === item.title){
+                x=item.id
+                console.log(x)
+            }
+            y= result.parameter.toString()
+        })
     })
+
     try{
         const change = await inquirer.prompt({
             message:"What would you like to change it to?",
             name: "change"
         })
         console.log(change)
-    
+            z=change.change
+        var query = connection.query(
+            "UPDATE roles SET "+y+" = ? WHERE id = ?",[z,x],
+            function(err, res,fields) {
+              if (err) console.log(err);
+              console.log(res.affectedRows + " roles updated!\n");
+            }
+          );
+
+        
         }
         catch(err){
             console.log(err)
@@ -349,7 +402,7 @@ await inquirer.prompt(simpleQ).then((result)=>{
 welcome();
 }
 
-async function updatee(){
+async function updatee(input){
     let array =[["Which Employee would you like to update? ",["placeholder"], 'update'],["Which parameter would you like to update?",["First Name","Last Name","Role Id", "Manager Id"], "parameter"]]
     let simpleQ = array.map((prompt)=>{
         return{
