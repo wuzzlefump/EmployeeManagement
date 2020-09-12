@@ -41,7 +41,7 @@ async function welcome(){
         console.log(initial)
         switch(initial.nav){
             case'Employees': 
-            employees();
+         employees();
             break;
             case'Departments': 
             departments();
@@ -69,13 +69,21 @@ async function employees(){
         })
         console.log(employee)
         switch(employee.nav){
+
             case'View Employees': 
-            viewe();
+            console.log("Viewing all employees...\n");
+            connection.query("SELECT * FROM employees", function(err, res) {
+              if (err) throw err;
+
+           viewe(res);
+            });
+ 
             break;
             case'Add Employees': 
             adde();
             break;
             case'Update Employees': 
+
             updatee();
             break;
             case'back': 
@@ -100,8 +108,13 @@ async function departments(){
         console.log(dept)
         switch(dept.nav){
 
-            case'View Departments': 
-            viewd()
+            case'View Departments':
+            console.log("Viewing all Departments...\n");
+            connection.query("SELECT * FROM departments", function(err, res) {
+              if (err) throw err;   
+            viewd(res)
+            });
+
             break;
             case'Add Departments': 
             addd()
@@ -131,8 +144,13 @@ async function roles(){
         console.log(role)
 
         switch(role.nav){
-            case'View Roles': 
-            viewr()
+            case'View Roles':
+            console.log("Viewing roles...\n");
+            connection.query("SELECT * FROM roles", function(err, res) {
+              if (err) throw err;   
+                viewr(res)
+            });
+
             break;
             case'Add Roles': 
             addr()
@@ -152,8 +170,8 @@ async function roles(){
 
 //department functions
 
-async function viewd(){
-
+async function viewd(input){
+    console.table(input);
     welcome()
 }
 
@@ -206,8 +224,8 @@ async function updated(){
 }
 // role functions
 
-async function viewr(){
-
+async function viewr(input){
+    console.table(input)
     welcome()
 }
 
@@ -261,8 +279,8 @@ async function updater(){
 //employee functions
 
 
-async function viewe(){
-
+async function viewe(input){
+console.table(input);
 welcome();
 }
 
