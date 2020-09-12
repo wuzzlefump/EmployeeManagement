@@ -69,7 +69,6 @@ async function employees(){
             choices:['View Employees','Add Employees','Update Employees','back'],
             name: "nav"
         })
-        console.log(employee)
         switch(employee.nav){
 
             case'View Employees': 
@@ -113,7 +112,6 @@ async function departments(){
             choices:['View Departments','Add Departments','Update Departments','back'],
             name: "nav"
         })
-        console.log(dept)
         switch(dept.nav){
 
             case'View Departments':
@@ -157,7 +155,6 @@ async function roles(){
             choices:['View Roles','Add Roles','Update Roles','back'],
             name: "nav"
         })
-        console.log(role)
 
         switch(role.nav){
             case'View Roles':
@@ -196,7 +193,6 @@ async function roles(){
 
 async function viewd(input){
     console.table(input);
-    console.log(input)
     welcome()
 }
 
@@ -246,7 +242,6 @@ input.forEach(item=>{
         input.forEach(item=>{
             if (result.update === item.department_name){
                 x=item.id
-                console.log(x)
             }
         })
      
@@ -336,7 +331,6 @@ async function updater(input){
         input.forEach(item=>{
             if (result.update === item.title){
                 x=item.id
-                console.log(x)
             }
             y= result.parameter.toString()
         })
@@ -429,7 +423,6 @@ async function updatee(input){
         input.forEach(item=>{
             if (result.update === item.first_name){
                 x=item.id
-                console.log(x)
             }
             y= result.parameter.toString()
         })
