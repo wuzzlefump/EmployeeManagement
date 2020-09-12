@@ -21,11 +21,11 @@ var connection = mysql.createConnection({
 
 
 
-  connection.connect(function(err) {
+connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
     welcome();
-  });
+});
 
 
 
@@ -38,10 +38,9 @@ async function welcome(){
             choices:['Employees','Departments','Roles','Exit'],
             name: "nav"
         })
-        console.log(initial)
         switch(initial.nav){
             case'Employees': 
-         employees();
+            employees();
             break;
             case'Departments': 
             departments();
@@ -120,7 +119,15 @@ async function departments(){
             addd()
             break;
             case'Update Departments': 
-            updated()
+            connection.query("SELECT * FROM departments", function(err, res) {
+                if (err) throw err; 
+                let arr = []
+                res.forEach(item=>{
+                   arr.push(item.department_name) 
+                })
+                
+                updated(arr)
+              });
             break;
             case'back': 
             welcome();
@@ -172,11 +179,12 @@ async function roles(){
 
 async function viewd(input){
     console.table(input);
+    console.log(input)
     welcome()
 }
 
 async function addd(){
-    let array =[["What is the New Department's name? ", 'first']]
+    let array =[["What is the New Department's name? ", 'title']]
     let simpleQ = array.map((prompt)=>{
         return{
             message:prompt[0],
@@ -186,14 +194,28 @@ async function addd(){
     
     
     await inquirer.prompt(simpleQ).then((result)=>{
-        console.log(result)
+            console.log("Inserting a new department...\n");
+            var query = connection.query(
+              "INSERT INTO departments SET ?",
+              {
+                department_name: result.title,
+              },
+              function(err, res) {
+                if (err) throw err;
+                console.log(res.affectedRows + " Department inserted!\n");
+              }
+            );
     })
 
     welcome()
 }
 
-async function updated(){
-    let array =[["Which department would you like to update? ",["placeholder"], 'update']]
+async function updated(input){
+
+    let arr =[]
+
+    let array =[["Which department would you like to update? ",input, 'update']]
+
     let simpleQ = array.map((prompt)=>{
         return{
             type:"list",
@@ -202,19 +224,19 @@ async function updated(){
             name:prompt[2]
         }
     })
-    
-    
     await inquirer.prompt(simpleQ).then((result)=>{
-        console.log(result)
+        arr =[]
+        arr.push(result.update)
     })
+
 
     try{
         const change = await inquirer.prompt({
             message:"What would you like to change it to?",
             name: "change"
         })
-        console.log(change)
-    
+
+        console.log(change);
         }
         catch(err){
             console.log(err)
@@ -237,9 +259,20 @@ let simpleQ = array.map((prompt)=>{
         name:prompt[1]
     }
 })
-
 await inquirer.prompt(simpleQ).then((result)=>{
-    console.log(result)
+    console.log("Inserting a new role...\n");
+    var query = connection.query(
+      "INSERT INTO roles SET ?",
+      {
+        title: result.title,
+        salary: result.salary,
+        department_id: result.deptId
+      },
+      function(err, res) {
+        if (err) throw err;
+        console.log(res.affectedRows + " Role inserted!\n");
+      }
+    );
 })
 welcome()
 }
@@ -292,17 +325,27 @@ let simpleQ = array.map((prompt)=>{
         message:prompt[0],
         name:prompt[1]
     }
+
 })
 
 
 await inquirer.prompt(simpleQ).then((result)=>{
-    console.log(result)
+        console.log("Inserting a new Employee...\n");
+        var query = connection.query(
+          "INSERT INTO employees SET ?",
+          {
+            first_name: result.first,
+            last_name:result.last,
+            role_id:result.rid,
+            manager_id:result.mid
+          },
+          function(err, res) {
+            if (err) throw err;
+            console.log(res.affectedRows + " Employee inserted!\n");
+          }
+        );
+
 })
-
-
-
-
-
 welcome();
 }
 
